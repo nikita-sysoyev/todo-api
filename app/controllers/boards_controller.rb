@@ -1,28 +1,37 @@
 class BoardsController < ApplicationController
+  before_action :set_board, only: [:show, :update, :destroy]
+
   def index()
     @collection = Board.all
     render json: @collection
   end
 
   def show()
-    @resource = Board.where(:id => params[:id]).first
     render json: @resource
   end
 
   def create()
-    @resource = Board.create(params[:board])
+    @resource = Board.create(resource_params)
     render json: @resource
   end
 
   def update()
-    @resource = Board.where(:id => params[:id]).first
-    @resource.update(params[:board])
+    @resource.update(resource_params)
     render json: @resource
   end
 
   def destroy()
-    @resource = Board.where(:id => params[:id]).first
     @resource.destroy
     render json: @resource
+  end
+
+  private # DRY
+
+  def resource_params
+    params.permit(:title, :description)
+  end
+
+  def set_board
+    @resource = Board.find(params[:id])
   end
 end
